@@ -3,12 +3,23 @@ document.addEventListener('DOMContentLoaded', function() {
   const navToggle = document.getElementById('navToggle');
   const navMenu = document.getElementById('navMenu');
   const navLinks = document.querySelectorAll('.nav-link');
+  const body = document.body;
 
   // Toggle menu mobile
   if (navToggle) {
-    navToggle.addEventListener('click', function() {
+    navToggle.addEventListener('click', function(e) {
+      e.stopPropagation();
       navMenu.classList.toggle('active');
       navToggle.classList.toggle('active');
+      
+      // Previne scroll do body quando menu está aberto
+      if (navMenu.classList.contains('active')) {
+        body.style.overflow = 'hidden';
+        body.classList.add('menu-open');
+      } else {
+        body.style.overflow = '';
+        body.classList.remove('menu-open');
+      }
       
       // Muda ícone do toggle
       const icon = navToggle.querySelector('i');
@@ -36,6 +47,9 @@ document.addEventListener('DOMContentLoaded', function() {
       // Fecha menu mobile se estiver aberto
       if (navMenu.classList.contains('active')) {
         navMenu.classList.remove('active');
+        body.style.overflow = '';
+        body.classList.remove('menu-open');
+        
         const icon = navToggle.querySelector('i');
         icon.classList.remove('fa-times');
         icon.classList.add('fa-bars');
@@ -55,6 +69,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
       }
     });
+  });
+
+  // Fecha menu ao clicar fora (em telas pequenas)
+  document.addEventListener('click', function(e) {
+    if (window.innerWidth <= 768) {
+      if (!navMenu.contains(e.target) && !navToggle.contains(e.target) && navMenu.classList.contains('active')) {
+        navMenu.classList.remove('active');
+        body.style.overflow = '';
+        body.classList.remove('menu-open');
+        
+        const icon = navToggle.querySelector('i');
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+      }
+    }
   });
 
   // Criar pétalas de sakura
